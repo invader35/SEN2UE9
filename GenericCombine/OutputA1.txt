@@ -1,0 +1,27 @@
+1. Original vector<int>
+1, 1, 2, 3, 3, 
+2. Original vector<int>
+3, 2, 1, 4, 1, 
+Result vector<int>
+9, 4, 4, 144, 9, 
+
+1. Original list<float>
+2, 2, 4, 5, 5, 
+2. Original list<float>
+3, 4, 1, 3, 5, 
+Result list<float>
+36, 64, 16, 225, 625, 
+
+1. Original vector<float>
+9, 2, 2, 7, 8, 
+2. Original vector<float>
+8, 5, 7, 3, 8, 
+Result vector<float>
+5184, 100, 196, 441, 4096, 
+
+1, Original list<float>
+6, 2, 7, 9, 4, 
+2. Original list<float>
+9, 6, 7, 9, 2, 
+Result list<float>
+2916, 144, 2401, 6561, 64, 

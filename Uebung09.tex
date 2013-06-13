@@ -1,0 +1,184 @@
+\documentclass[a4paper,oneside,openany]{tufte-book}
+\usepackage[utf8x]{inputenc}
+\usepackage[german]{babel}
+\usepackage{microtype} % Improves character and word spacing
+\usepackage{booktabs} % Better horizontal rules in tables
+\usepackage{ucs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{enumitem}
+
+\makeatletter% since we're using commands with @ in their name
+
+\let\origappendix\appendix% save a copy of the original meaning of \appendix
+\renewcommand{\appendix}{%
+  \origappendix% do all the original \appendix stuff
+  \titlecontents{chapter}%
+    [0em] % distance from left margin
+    {\vspace{1.5\baselineskip}\begin{fullwidth}\LARGE\rmfamily\itshape} % above (global formatting of entry)
+    {\hspace*{0em}\appendixname~\thecontentslabel: } % before w/label (label = ``2'')
+    {\hspace*{0em}} % before w/o label
+    {\rmfamily\upshape\qquad\thecontentspage} % filler + page (leaders and page num)
+    [\end{fullwidth}] % after
+  \titleformat{\chapter}%
+    [display]% shape
+    {\relax\ifthenelse{\NOT\boolean{@tufte@symmetric}}{\begin{fullwidth}}{}}% format applied to label+text
+    {\itshape\huge Anhang~\thechapter}% label
+    {0pt}% horizontal separation between label and title body
+    {\huge\rmfamily\itshape}% before the title body
+    [\ifthenelse{\NOT\boolean{@tufte@symmetric}}{\end{fullwidth}}{}]% after the title body
+  \setcounter{secnumdepth}{0}% ``number'' the appendices
+  \renewcommand{\thefigure}{\@arabic\c@figure}% define \thefigure to use only the figure number (1), not A.1
+  \renewcommand{\thetable}{\@arabic\c@table}%
+  %
+  % Add any other special appendix-related code here.
+  %
+}
+\makeatother% restore the special meaning of @
+
+
+\author{Schett Matthias}
+\title{SEN-\"{U}bung 09}
+
+\begin{document}
+
+\definecolor{gray}{rgb}{0.9,0.9,0.9} % background color for the listings
+
+\lstset{language=[Visual]Basic, morekeywords={param, local}, breaklines=true, tabsize=4, showstringspaces=false,backgroundcolor=\color{gray}, numbers=left,
+    basicstyle=\ttfamily} % standard listing settings
+
+\frontmatter
+
+\maketitle
+\tableofcontents
+\mainmatter
+
+\chapter{Aufgabe 1}
+
+\section{L\"{o}sungsidee}
+
+Der generische Algorihtmus combine\_if soll den Inhalt von zwei Container in einen dritten kopieren. Dazu soll, falls das Prädikat p zutrifft die Operation combOp ausgeführt werden.
+Der Algorithmus läuft mittels einer while Schleife von first1 bis end1 und ruft für jeden Iterator aus dem ersten und dem zweiten Container das Prädikat auf und führt anschließend die Operation
+aus. Das Ergebnis wird in den dritten Container kopiert.
+Da in der Schnittstelle nur Iteratoren übergeben werden, funktioniert der Algorithmus nur dann wenn alle drei Container gleich groß sind. Weiters funktioniert der Algorithmus nicht in Verbindung mit einem std::set
+da es hier nur konstante Iteratoren gibt, denen nicht direkt ein Wert zugewiesen werden kann.
+
+Der Quellcode ist im Anhang unter \nameref{chap:Auf1} zu finden.
+
+\section{Testf\"{a}lle}
+\begin{fullwidth}
+\lstinputlisting{GenericCombine/OutputA1.txt}
+\end{fullwidth}
+
+\chapter{Aufgabe 2}
+
+\section{L\"{o}sungsidee}
+
+Die Templateklasse BinarySearchTree beinhaltet eine verschachtelte TNode Struktur die alle Blätter des Baumes darstellt.
+
+Folgende Methoden wurde als private deklariert
+\begin{fullwidth}
+\begin{enumerate}
+	\item TNode* MakeNode(TValue const \&val);\label{enum:MakeNode}
+	\item bool InsertSorted(TNode* \&pLeaf, TValue const \&value);\label{enum:InsertSorted}
+	\item template <typename TVisitor> void PrintInOrder (TNode * pLeaf, TVisitor visitor) const;\label{enum:PrintInOrder}
+	\item template <typename TVisitor> void PrintPreOrder (TNode *pLeaf, TVisitor visitor) const;\label{enum:PrintPreOrder}
+	\item template <typename TVisitor> void PrintPostOrder (TNode *pLeaf, TVisitor visitor) const;\label{enum:PrintPostOrder}
+	\item void Flush (TNode * \& pRoot);\label{enum:Flush}
+	\item TNode* copyTree(TNode* other);\label{enum:copyTree}
+\end{enumerate}
+
+Folgende Methoden sind als public zu finden:
+
+\begin{enumerate}[resume]
+	\item BinarySearchTree();\label{enum:Ctor}
+	\item BinarySearchTree(BinarySearchTree<TValue, TPred> const \&tree);\label{enum:CopyCtor}
+	\item BinarySearchTree<TValue, TPred> \&operator=(BinarySearchTree<TValue, TPred> const \&tree);\label{enum:Assign}
+	\item \~BinarySearchTree();\label{enum:Dtor}
+	\item bool Insert(TValue const \&value); // returns false if already contained\label{enum:Insert}
+	\item template <typename TVisitor> void VisitPreOrder(TVisitor visitor) const;\label{enum:VisitPre}
+	\item template <typename TVisitor> void VisitInOrder(TVisitor visitor) const;\label{enum:VisitIn}
+	\item template <typename TVisitor> void VisitPostOrder(TVisitor visitor) const;\label{enum:VisitPost}
+\end{enumerate}
+\end{fullwidth}
+
+\newpage
+
+ad \ref{enum:MakeNode}:
+Mit dieser Methode wird ein neuer Knoten am Heap angelegt.
+
+ad \ref{enum:InsertSorted}:
+Fügt dem Baum einen neuen Knoten hinzu, dieser wird auch gleich an der richtigen Stelle einsortiert. Ist der Wert bereits vorhanden wird nicht eingefügt und false
+zurückgegeben.
+
+ad \ref{enum:PrintInOrder}:
+Inorder gibt den Baum in der richtigen Reihenfolge, also vom kleinsten zum Größten Wert.
+
+ad \ref{enum:PrintPreOrder}:
+Gibt die Wurzel vor den Teilbäumen aus.
+
+ad \ref{enum:PrintPostOrder}:
+Gibt die Wurzel nach den Teilbäumen aus.
+
+ad \ref{enum:Flush}:
+Flush löscht den gesamten Baum und gibt sämtlichen reservierten Speicher wieder frei.
+
+ad \ref{enum:copyTree}
+Hilfsfunktion die beim kopieren des Baumes hilft.
+
+ad \ref{enum:Ctor}
+Erstellt einen neuen Binären Such Baum
+
+ad \ref{enum:CopyCtor}
+Erstellt einen neuen Baum mit tree als Vorlage
+
+ad \ref{enum:Assign}
+Weist einem Baum einen anderen zu.
+
+ad \ref{enum:Dtor}
+Räumt den allokierten Speicher wieder auf.
+
+ad \ref{enum:Insert}
+Benutzt InsertSorted als Helper und fügt neuen Knoten hinzu.
+
+ad \ref{enum:VisitPre}
+Siehe \ref{enum:PrintPreOrder}
+
+ad \ref{enum:VisitIn}
+Siehe \ref{enum:PrintInOrder}
+
+ad \ref{enum:VisitPost}
+Siehe \ref{enum:PrintPostOrder}
+
+Der Quellcode ist im Anhang unter \nameref{chap:Auf2} zu finden.
+
+\section{Testf\"{a}lle}
+\begin{fullwidth}
+\lstinputlisting{BinarySearchTree/OutputA2.txt}
+\end{fullwidth}
+\backmatter
+
+\appendix
+
+\setboolean{@mainmatter}{true}
+\chapter{Aufgabe 1}\label{chap:Auf1}
+
+\begin{fullwidth}
+\lstinputlisting[caption=Header]{GenericCombine/GenericCombine.h}
+\lstinputlisting[caption=Implementierung]{GenericCombine/GenericCombine.impl}
+\lstinputlisting[caption=Testtreiber]{GenericCombine/Main.cpp}
+\end{fullwidth}
+
+\chapter{Aufgabe 2}\label{chap:Auf2}
+
+\begin{fullwidth}
+\lstinputlisting[caption=Header und Implementierung]{BinarySearchTree/BinarySearchTree.h}
+\lstinputlisting[caption=Testtreiber]{BinarySearchTree/Main.cpp}
+\end{fullwidth}
+
+\end{document}

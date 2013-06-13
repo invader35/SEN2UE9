@@ -1,0 +1,36 @@
+///////////////////////////////////////
+// Workfile    : GenericCombine.impl
+// Author      : Matthias Schett
+// Date        : 27-05-2013
+// Description : Combine if template
+// Remarks     : -
+// Revision    : 0
+///////////////////////////////////////
+#include <algorithm>
+#include <string>
+#include <ostream>
+#include <iostream>
+#include <iterator>
+
+template<typename InputItor1, typename InputItor2, typename OutputItor, typename CombineOp, typename Pred>
+void combine_if(InputItor1 first1, InputItor1 end1, InputItor2 first2, OutputItor res, CombineOp combOp, Pred p){
+    while(first1 != end1){
+        if(p(*first1) && p(*first2)){
+            *res = combOp(*first1,*first2++);
+        }
+        ++res; ++first1;
+    }
+}
+
+template <typename Container>
+void Print(Container const& coll, std::string header, std::ostream &os){
+    typename Container::const_iterator begin(coll.begin());
+    typename Container::const_iterator end(coll.end());
+    
+    os << header << endl;
+
+    ostream_iterator<Container::const_iterator::value_type> out_it (os, ", ");
+
+    copy(begin, end, out_it);
+
+}
